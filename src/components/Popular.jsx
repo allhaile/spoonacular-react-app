@@ -1,56 +1,88 @@
+import { Splide, SplideSlide } from "@splidejs/react-splide";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
+import "@splidejs/splide/dist/css/splide.min.css";
+
 function Popular() {
-
   // variable and function to increment variable
-  const [popular, setPopular] = useState([])
+  const [popular, setPopular] = useState([]);
 
-    useEffect(() => {
-      getPopular();
-    }, [])
-    
+  useEffect(() => {
+    getPopular();
+  }, []);
 
-    const getPopular = async () => {
-        const api = await fetch(`https://api.spoonacular.com/recipes/random?apiKey=${process.env.REACT_APP_SPOON_KEY}&number=10`);
+  const getPopular = async () => {
+    const api = await fetch(
+      `https://api.spoonacular.com/recipes/random?apiKey=${process.env.REACT_APP_SPOON_KEY}&number=10`
+    );
 
-        const data = await api.json();
-        setPopular(data.recipes)
-        console.log(data)
-
-    }
+    const data = await api.json();
+    setPopular(data.recipes);
+    console.log(data);
+  };
 
   return (
     <div>
       {/* Loops over an array and grabs what you specify */}
-      {popular.map((recipe) =>{
-        return(
-          <Wrapper key={recipe.id}>
-            <h3>Popular Picks</h3>
-          {popular.map((recipe) =>{
-            return(
-              <Card>
-                <p>{recipe.title}</p>
-                <img src={recipe.image} alt={recipe.title}></img>
-              </Card>
+      <Wrapper>
+        <h3>Popular Picks</h3>
+        <Splide options={{
+          perPage: 4,
+          arrows: false,
+          pagination: false,
+          drag: "free",
+          gap: "5rem",
+        }}>
+          {popular.map((recipe) => {
+            return (
+              <SplideSlide key={recipe.id}>
+                <Card>
+                  <p>{recipe.title}</p>
+                  <img src={recipe.image} alt={recipe.title}></img>
+                </Card>
+              </SplideSlide>
             );
           })}
-            
-            
-          </Wrapper>
-        );
-      })}
-
+        </Splide>
+      </Wrapper>
     </div>
-  )
+  );
 }
 
 const Wrapper = styled.div`
   margin: 4rem 0rem;
-`
+`;
 
 const Card = styled.div`
   min-height: 25rem;
   border-radius: 2rem;
-`
+  overflow: hidden;
+  position: relative;
+
+  img {
+    border-radius: 2rem;
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  p{
+    position: absolute;
+    z-index: 10;
+    left: 50%;
+    bottom: 0%;
+    transform: translate(-50%, 0%);
+    color: white;
+    width: 100%;
+    text-align: center;
+    font-weight: 600;
+    font-size: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+  }
+`;
 
 export default Popular;
